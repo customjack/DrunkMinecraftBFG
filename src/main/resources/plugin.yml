@@ -1,0 +1,6 @@
+name: DrunkMinecraft
+version: '${project.version}'
+main: me.carlton.drunkminecraft.DrunkMinecraft
+api-version: 1.19
+authors: [ JackCarlton ]
+description: Minecraft Drinking Game
