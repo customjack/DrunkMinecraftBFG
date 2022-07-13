@@ -1,0 +1,220 @@
+#
+#------------------------------
+#     Format Guidelines:
+#------------------------------
+#
+# You can create your own "drink events," every event needs the following format
+# event-name:
+#   action: [actionType]
+#   instruction: [String to be displayed upon action completion]
+#   drinkValue: [# of drinks]
+#
+#            OR
+#
+# event-name:
+#   action: [actionType]
+#   instruction: [String to be displayed upon action completion]
+#   drinkMin: [minimum number of drinks]
+#   drinkMax: [maxmimum number of drinks]
+#
+# The later picks a random integer between the drink minimum and maximum (inclusive)
+#
+#
+# There are a number of optional parameters that can be added to any event:
+# 1) reason: [String giving reason to player for drinking]
+# 2) broadcastMessage : [String giving reason that will be broadcast for other players to see]
+# 3) giveReason: [True/False, specifies whether the player will receive any reason for drinking
+# 4) chance: [0.0 - 1.0, the chance the player has to drink for this action]
+# 5) cooldown: [The time in seconds before the player can drink for this action action]
+# 6) drinksToGive: [amount of drinks a player can give out to drink]
+#
+#
+# In strings you can use the following placeholders:
+# 1) $playerName$ (replaces this part of the string with the player's name)
+# 2) $drinkValue$ (number of drinks the game decides the player takes)
+# 3) $drinksToGive$ (number of drinks the player gives)
+# 3) $drinks$, $shots$, $sips$, $chugs$ all can be used to represent the proper grammar for the amount of drinks#
+#    i.e they will have an 's' at the end if drinkValue is not 1.
+#
+#
+# There are a number of possible actions. With most actions you can add a condition (listed under them)
+# For example, you can specify what type of block broken causes a "drink event"
+# Not specifying a condition means any time the event occurs, a drink event will occur.
+#
+#
+# POSSIBLE ACTIONS:
+# 1) breakBlock
+#    a) blockType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+# 2) chat
+#    a) message
+#    b) messageContains
+# 3) consume
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+# 4) die
+#    a) damageCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html for choices)
+#    b) killer (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
+# 5) drop
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+#    b) amount
+# 6) expChange
+#    a) experienceRange (format: [min,max] )
+#    b) totalExperience
+# 7) fish
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+# 8) getAdvancement [Not currently working]
+#    a) advancement
+# 9) harvest
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+#    b) amount
+# 10) interact
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+# 11) interactEntity
+#    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
+# 12) itemBreak
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+# 13) join
+# 14) kill
+#    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
+# 15) mend
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
+# 16) move
+#    a) speed
+# 17) pickup
+#    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
+#    b) amount
+# 18) placeBlock
+#    a) blockType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
+# 19) takeDamage
+#    a) damageCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html for choices)
+# 20) tame
+#    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
+# 21) teleport
+#    a) teleportCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerTeleportEvent.TeleportCause.html for choices)
+#    b) distance
+#
+# There are examples below, they can be editted or removed
+# You can also add your own.
+
+dying:
+  action: die
+  instruction: 'Finish drink'
+  drinkValue: 5
+
+taking-fall-damage:
+  action: takeDamage
+  instruction: 'Take $drinkValue$ $drinks$'
+  drinkValue: 1
+  damageCause: FALL
+
+entity-explosion:
+  action: takeDamage
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 1
+  damageCause: ENTITY_EXPLOSION
+  cooldown: 5
+
+mining-diamonds:
+  action: breakBlock
+  instruction: 'Pick another player to drink'
+  drinkValue: 0
+  drinksToGive: 1
+  blockType: DIAMOND_ORE
+  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+
+mining-deepslate-diamonds:
+  action: breakBlock
+  instruction: 'Pick another player to drink'
+  drinkValue: 0
+  drinksToGive: 1
+  blockType: DEEPSLATE_DIAMOND_ORE
+  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+
+item-breaking:
+  action: itemBreak
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 1
+
+consuming-potion:
+  action: consume
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 1
+  itemType: POTION
+
+killing-horse:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 3
+  entity: HORSE
+
+killing-dolphin:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 3
+  entity: DOLPHIN
+
+killing-golem:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 3
+  entity: IRON_GOLEM
+
+killing-turtle:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 3
+  entity: TURTLE
+
+killing-cat:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 9
+  entity: CAT
+
+killing-villager:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 2
+  entity: VILLAGER
+
+killing-zombie-villager:
+  action: kill
+  instruction: 'Take $drinkValue$ drinks'
+  drinkValue: 2
+  entity: ZOMBIE_VILLAGER
+
+taming-animal:
+  action: tame
+  instruction: 'Pick another player to drink'
+  drinkValue: 0
+  drinksToGive: 1
+  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+
+killing-player:
+  action: kill
+  instructions: 'Take $drinkValue$ $drinks$'
+  drinkValue: 1
+  entity: PLAYER
+
+fire-damage:
+  action: takeDamage
+  instructions: 'Take $drinkValue$ $drinks$'
+  drinkValue: 1
+  damageCause: FIRE
+  cooldown: 30
+
+lightning-damage:
+  action: takeDamage
+  instructions: 'Take $drinkValue$ $drinks$'
+  drinkValue: 1
+  damageCause: LIGHTNING
+  cooldown: 5
+
+breaking-spawner:
+  action: breakBlock
+  instruction: 'Pick another player to drink'
+  drinkValue: 0
+  drinksToGive: 5
+  blockType: SPAWNER
+  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+
+

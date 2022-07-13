@@ -7,7 +7,11 @@ public final class DrunkMinecraft extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        getConfig().options().copyDefaults();
+        saveDefaultConfig();
 
+        //Events
+        //getServer().getPluginManager().registerEvents(, this);
     }
 
     @Override
