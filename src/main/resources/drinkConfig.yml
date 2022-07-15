@@ -43,178 +43,195 @@
 #
 #
 # POSSIBLE ACTIONS:
-# 1) breakBlock
+# 1) BREAK_BLOCK
 #    a) blockType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
-# 2) chat
+# 2) CHAT
 #    a) message
 #    b) messageContains
-# 3) consume
+# 3) CONSUME
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
-# 4) die
+# 4) DIE
 #    a) damageCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html for choices)
 #    b) killer (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
-# 5) drop
+# 5) DROP
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
 #    b) amount
-# 6) expChange
-#    a) experienceRange (format: [min,max] )
-#    b) totalExperience
-# 7) fish
+# 6) FISH
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
-# 8) getAdvancement [Not currently working]
+# 7) GET_ADVANCEMENT [Not currently working]
 #    a) advancement
-# 9) harvest
+# 8) HARVEST
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
 #    b) amount
-# 10) interact
+# 9) INTERACT
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
-# 11) interactEntity
+#    b) isRightClick (True or False)
+#    c) isLeftClick  (True or False)
+# 10) INTERACT_ENTITY
 #    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
-# 12) itemBreak
+# 11) ITEM_BREAK
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
-# 13) join
-# 14) kill
+# 12) JOIN
+# 13) KILL
 #    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
-# 15) mend
+# 14) LEVEL_CHANGE
+#    a) levelAchieved
+# 15) MEND
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
-# 16) move
+# 16) MOVE
 #    a) speed
-# 17) pickup
+# 17) PICKUP
 #    a) itemType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
 #    b) amount
-# 18) placeBlock
+# 18) PLACE_BLOCK
 #    a) blockType (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html for choices)
-# 19) takeDamage
+# 19) TAKE_DAMAGE
 #    a) damageCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html for choices)
-# 20) tame
+# 20) TAME
 #    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
-# 21) teleport
-#    a) teleportCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerTeleportEvent.TeleportCause.html for choices)
+# 21) TELEPORT
+#    a) teleportCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerTELEPORTEvent.TELEPORTCause.html for choices)
 #    b) distance
 #
-# There are examples below, they can be editted or removed
+# There are examples below, they can be editted or reMOVEd
 # You can also add your own.
 
 dying:
-  action: die
+  action: DIE
   instruction: 'Finish drink'
   drinkValue: 5
 
 taking-fall-damage:
-  action: takeDamage
+  action: TAKE_DAMAGE
   instruction: 'Take $drinkValue$ $drinks$'
   drinkValue: 1
-  damageCause: FALL
+  actionConditions:
+    damageCause: FALL
 
 entity-explosion:
-  action: takeDamage
+  action: TAKE_DAMAGE
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 1
-  damageCause: ENTITY_EXPLOSION
   cooldown: 5
+  actionConditions:
+    damageCause: ENTITY_EXPLOSION
 
 mining-diamonds:
-  action: breakBlock
+  action: BREAK_BLOCK
   instruction: 'Pick another player to drink'
   drinkValue: 0
   drinksToGive: 1
-  blockType: DIAMOND_ORE
   broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+  actionConditions:
+    blockType: DIAMOND_ORE
 
 mining-deepslate-diamonds:
-  action: breakBlock
+  action: BREAK_BLOCK
   instruction: 'Pick another player to drink'
   drinkValue: 0
   drinksToGive: 1
-  blockType: DEEPSLATE_DIAMOND_ORE
   broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+  actionConditions:
+    blockType: DEEPSLATE_DIAMOND_ORE
 
 item-breaking:
-  action: itemBreak
+  action: ITEM_BREAK
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 1
 
 consuming-potion:
-  action: consume
+  action: CONSUME
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 1
-  itemType: POTION
+  actionConditions:
+    itemType: POTION
 
 killing-horse:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 3
-  entity: HORSE
+  actionConditions:
+    entity: HORSE
 
 killing-dolphin:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 3
-  entity: DOLPHIN
+  actionConditions:
+    entity: DOLPHIN
 
 killing-golem:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 3
-  entity: IRON_GOLEM
+  actionConditions:
+    entity: IRON_GOLEM
 
 killing-turtle:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 3
-  entity: TURTLE
+  actionConditions:
+    entity: TURTLE
 
 killing-cat:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 9
-  entity: CAT
+  actionConditions:
+    entity: CAT
 
 killing-villager:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 2
-  entity: VILLAGER
+  actionConditions:
+    entity: VILLAGER
 
 killing-zombie-villager:
-  action: kill
+  action: KILL
   instruction: 'Take $drinkValue$ drinks'
   drinkValue: 2
-  entity: ZOMBIE_VILLAGER
+  actionConditions:
+    entity: ZOMBIE_VILLAGER
 
 taming-animal:
-  action: tame
+  action: TAME
   instruction: 'Pick another player to drink'
   drinkValue: 0
   drinksToGive: 1
   broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
 
 killing-player:
-  action: kill
-  instructions: 'Take $drinkValue$ $drinks$'
+  action: KILL
+  instruction: 'Take $drinkValue$ $drinks$'
   drinkValue: 1
-  entity: PLAYER
+  actionConditions:
+    entity: PLAYER
 
 fire-damage:
-  action: takeDamage
-  instructions: 'Take $drinkValue$ $drinks$'
+  action: TAKE_DAMAGE
+  instruction: 'Take $drinkValue$ $drinks$'
   drinkValue: 1
-  damageCause: FIRE
   cooldown: 30
+  actionConditions:
+    damageCause: FIRE
 
 lightning-damage:
-  action: takeDamage
-  instructions: 'Take $drinkValue$ $drinks$'
+  action: TAKE_DAMAGE
+  instruction: 'Take $drinkValue$ $drinks$'
   drinkValue: 1
-  damageCause: LIGHTNING
   cooldown: 5
+  actionConditions:
+    damageCause: LIGHTNING
 
 breaking-spawner:
-  action: breakBlock
+  action: BREAK_BLOCK
   instruction: 'Pick another player to drink'
   drinkValue: 0
   drinksToGive: 5
-  blockType: SPAWNER
   broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+  actionConditions:
+    blockType: SPAWNER
 
 

@@ -1,0 +1,16 @@
+#
+#
+#
+#
+scoreboard:
+  scoreboardOn: true
+  showDrinks: true
+  showDrinksToGive: true
+  showTopDrinkers: true
+  title: "===Drunk Minecraft==="
+  numberOfTopDrinkers: 5
+drinkNotification:
+  fadeInTicks: 10
+  fadeoutTicks: 10
+  stayTicks: 60
+

@@ -1,5 +1,6 @@
 package me.carlton.drunkminecraft.newevents;
 
+import me.carlton.drunkminecraft.dataholder.DrinkAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -17,26 +18,28 @@ public class DrinkEvent extends Event implements Cancellable {
     private boolean cancelled;
     private Event event;
     private Player drinkingPlayer;
+    private DrinkAction drinkAction;
 
-    private double drinks;
-
-    private DrinkEvent(Event event, double drinks, Player drinkingPlayer) {
+    public DrinkEvent(Event event, DrinkAction drinkAction, Player drinkingPlayer) {
         this.event = event;
         if (event instanceof Cancellable) {
             this.cancelled = ((Cancellable) event).isCancelled();
         }
-        this.drinks = drinks;
+        this.drinkAction = drinkAction;
         this.drinkingPlayer = drinkingPlayer;
     }
 
-    public void setDrinks(double drinks) {
-        this.drinks = drinks;
+    public Event getEvent() {
+        return event;
     }
 
-    public double getDrinks() {
-        return this.drinks;
+    public void setDrinkAction(DrinkAction drinkAction) {
+        this.drinkAction = drinkAction;
     }
 
+    public DrinkAction getDrinkAction() {
+        return drinkAction;
+    }
 
     /**
      * Getter for the player

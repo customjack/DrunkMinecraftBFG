@@ -4,3 +4,24 @@ main: me.carlton.drunkminecraft.DrunkMinecraft
 api-version: 1.19
 authors: [ JackCarlton ]
 description: Minecraft Drinking Game
+commands:
+  dm:
+    description: Main Drunk Minecraft command, type /frpg help for more info
+    aliases: [drunkMinecraft]
+permissions:
+  dm.assignDrink:
+    description: Allows user to prompt a player to drink if they have drinks to give
+    default: true
+  dm.help:
+    description: Access help menu
+    default: true
+  dm.setDrinks:
+    description: Allows user to set the drinks of a player
+    default: op
+  dm.setDrinksToGive:
+    description: Allows user to set the drinks to give a player
+    default: op
+  dm.assignDrinkOP:
+    description: Allows user to prompt a player to drink without having drinks to give
+    default: op
+
