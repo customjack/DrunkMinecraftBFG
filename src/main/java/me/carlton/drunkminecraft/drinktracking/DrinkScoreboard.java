@@ -80,11 +80,11 @@ public class DrinkScoreboard implements Listener {
             lineNumber++;
         }
         if (showDrinksToGive) {
-            addNewLine(board,obj,lineNumber,"drinks_to_give",ChatColor.GOLD + "Drinks To Give: " + ChatColor.GRAY + "0");
+            addNewLine(board,obj,lineNumber,"drinks_to_give",ChatColor.GOLD + "Drinks To Give: " + ChatColor.BLUE + "0");
             lineNumber++;
         }
         if (showDrinkTotal) {
-            addNewLine(board,obj,lineNumber,"drinks_taken",ChatColor.GOLD + "Drinks Taken: " + ChatColor.GRAY + "0");
+            addNewLine(board,obj,lineNumber,"drinks_taken",ChatColor.GOLD + "Drinks Taken: " + ChatColor.BLUE + "0");
             lineNumber++;
         }
 
@@ -115,7 +115,7 @@ public class DrinkScoreboard implements Listener {
                 if ((i-1) < topDrinkers.size()) {
                     updateEntry(board, "drinkLeader" + String.valueOf(i),
                             (ChatColor.GRAY + String.valueOf(i) + ". " +
-                                    ChatColor.GOLD + topDrinkers.get(i-1).getPlayerName() +
+                                    ChatColor.GREEN + topDrinkers.get(i-1).getPlayerName() +
                                     ChatColor.GRAY + " - " +
                                     ChatColor.BLUE + topDrinkers.get(i-1).getDrinksTaken()));
                 } else {
@@ -129,11 +129,11 @@ public class DrinkScoreboard implements Listener {
             lineNumber++;
         }
         if (showDrinksToGive) {
-            updateEntry(board,"drinks_to_give",ChatColor.GOLD + "Drinks To Give: " + ChatColor.GRAY + playerProfile.getDrinksToGive());
+            updateEntry(board,"drinks_to_give",ChatColor.GOLD + "Drinks To Give: " + ChatColor.BLUE + playerProfile.getDrinksToGive());
             lineNumber++;
         }
         if (showDrinkTotal) {
-            updateEntry(board,"drinks_taken",ChatColor.GOLD + "Drinks Taken: " + ChatColor.GRAY + playerProfile.getDrinksTaken());
+            updateEntry(board,"drinks_taken",ChatColor.GOLD + "Drinks Taken: " + ChatColor.BLUE + playerProfile.getDrinksTaken());
             lineNumber++;
         }
         updateEntry(board,"blank_space_2"," ");

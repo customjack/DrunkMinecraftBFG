@@ -130,7 +130,7 @@ public class DrinkActionManager {
         }
         String actionName = preparseActionName.toUpperCase().replace(" ","_");
         Class action = getEventClassFromAction(actionName);
-        double drinkValue = yamlTools.getYamlDouble( key + ".drinkValue",true,1);
+        double drinkValue = yamlTools.getYamlDouble( key + ".drinkValue",true,-1.0);
         int drinkMin = yamlTools.getYamlInt( key + ".drinkMin",false, 0);
         int drinkMax = yamlTools.getYamlInt( key + ".drinkMax",false, 0);
         String reason = yamlTools.getYamlString( key + ".reason",false, null );
@@ -139,9 +139,10 @@ public class DrinkActionManager {
         double chance = yamlTools.getYamlDouble( key + ".chance",false,1.0);
         double cooldown = yamlTools.getYamlDouble( key + ".cooldown",false, 0);
         int drinksToGive = yamlTools.getYamlInt( key + ".drinksToGive",false, 0);
+        boolean everyoneElseDrinks = yamlTools.getYamlBoolean( key + ".everyoneElse",false,false);
 
         DrinkAction drinkAction = new DrinkAction(name,instruction,actionName,drinkValue);
-        setDrinkInformation(drinkAction,drinkMin,drinkMax,reason,broadcastMessage,giveReason,chance,cooldown,drinksToGive);
+        setDrinkInformation(drinkAction,drinkMin,drinkMax,reason,broadcastMessage,giveReason,chance,cooldown,drinksToGive,everyoneElseDrinks);
         if (drinkConfig.contains(key+".actionConditions")) {
             String conditionsPath = key+".actionConditions";
             if (action.equals(BlockBreakEvent.class)) {
@@ -226,7 +227,7 @@ public class DrinkActionManager {
 
     private static void setDrinkInformation(DrinkAction drinkAction, int drinkMin, int drinkMax, String reason,
                                             String broadcastMessage, boolean giveReason, double chance,
-                                            double cooldown, int drinksToGive) {
+                                            double cooldown, int drinksToGive,boolean everyoneElse) {
         drinkAction.setDrinkMin(drinkMin);
         drinkAction.setDrinkMax(drinkMax);
         drinkAction.setReason(reason);
@@ -235,6 +236,7 @@ public class DrinkActionManager {
         drinkAction.setChance(chance);
         drinkAction.setCooldown(cooldown);
         drinkAction.setDrinksToGive(drinksToGive);
+        drinkAction.setEveryoneElseDrinks(everyoneElse);
     }
 
 }

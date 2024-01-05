@@ -22,11 +22,12 @@
 #
 # There are a number of optional parameters that can be added to any event:
 # 1) reason: [String giving reason to player for drinking]
-# 2) broadcastMessage : [String giving reason that will be broadcast for other players to see]
+# 2) broadcastMessage: [String giving reason that will be broadcast for other players to see]
 # 3) giveReason: [True/False, specifies whether the player will receive any reason for drinking
 # 4) chance: [0.0 - 1.0, the chance the player has to drink for this action]
 # 5) cooldown: [The time in seconds before the player can drink for this action action]
 # 6) drinksToGive: [amount of drinks a player can give out to drink]
+# 7) everyoneElse: [True/False, specifies whether everyone else will drink in place of the player]
 #
 #
 # In strings you can use the following placeholders:
@@ -90,7 +91,7 @@
 # 20) TAME
 #    a) entity (see https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html for choices)
 # 21) TELEPORT
-#    a) teleportCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerTELEPORTEvent.TELEPORTCause.html for choices)
+#    a) teleportCause (see https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/player/PlayerTeleportEvent.TeleportCause.html for choices)
 #    b) distance
 #
 # There are examples below, they can be editted or reMOVEd
@@ -99,18 +100,25 @@
 dying:
   action: DIE
   instruction: 'Finish drink'
+  reason: 'for dying'
+  broadcastMessage: '$playerName$ must finish their drink for dying'
   drinkValue: 5
 
 taking-fall-damage:
   action: TAKE_DAMAGE
   instruction: 'Take $drinkValue$ $drinks$'
+  reason: 'for taking fall damage'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for taking fall damage'
   drinkValue: 1
+  chance: 0.30
   actionConditions:
     damageCause: FALL
 
 entity-explosion:
   action: TAKE_DAMAGE
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for taking entity explosion damage (5 second cooldown)'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for taking explosion damage'
   drinkValue: 1
   cooldown: 5
   actionConditions:
@@ -119,29 +127,35 @@ entity-explosion:
 mining-diamonds:
   action: BREAK_BLOCK
   instruction: 'Pick another player to drink'
+  reason: 'for mining diamonds'
   drinkValue: 0
   drinksToGive: 1
-  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+  broadcastMessage: '$playerName$ has gained $drinksToGive$ $drinks$ to assign'
   actionConditions:
     blockType: DIAMOND_ORE
 
 mining-deepslate-diamonds:
   action: BREAK_BLOCK
   instruction: 'Pick another player to drink'
+  reason: 'for mining diamonds'
   drinkValue: 0
   drinksToGive: 1
-  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+  broadcastMessage: '$playerName$ has gained $drinksToGive$ $drinks$ to assign'
   actionConditions:
     blockType: DEEPSLATE_DIAMOND_ORE
 
 item-breaking:
   action: ITEM_BREAK
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for breaking your tool'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for breaking their tool (lmao idiot)'
   drinkValue: 1
 
 consuming-potion:
   action: CONSUME
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for drinking in game'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for drinking in game'
   drinkValue: 1
   actionConditions:
     itemType: POTION
@@ -149,6 +163,8 @@ consuming-potion:
 killing-horse:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a horse'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for killing a horse'
   drinkValue: 3
   actionConditions:
     entity: HORSE
@@ -156,6 +172,8 @@ killing-horse:
 killing-dolphin:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a dolphin'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for killing a dolphin'
   drinkValue: 3
   actionConditions:
     entity: DOLPHIN
@@ -163,6 +181,8 @@ killing-dolphin:
 killing-golem:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a golem'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for killing a golem'
   drinkValue: 3
   actionConditions:
     entity: IRON_GOLEM
@@ -170,6 +190,8 @@ killing-golem:
 killing-turtle:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a turtle'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for killing a turtle'
   drinkValue: 3
   actionConditions:
     entity: TURTLE
@@ -177,13 +199,18 @@ killing-turtle:
 killing-cat:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
-  drinkValue: 9
+  reason: 'for killing a cat'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for taking $drinkValue$ lives away from a cat'
+  drinkMin: 1
+  drinkMax: 9
   actionConditions:
     entity: CAT
 
 killing-villager:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a villager'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for killing a villager'
   drinkValue: 2
   actionConditions:
     entity: VILLAGER
@@ -191,27 +218,35 @@ killing-villager:
 killing-zombie-villager:
   action: KILL
   instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a villager'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for killing a zombie villager (lmao get fucked)'
   drinkValue: 2
   actionConditions:
     entity: ZOMBIE_VILLAGER
 
 taming-animal:
   action: TAME
-  instruction: 'Pick another player to drink'
+  instruction: 'Assign $drinksToGive$ $drinks$'
+  reason: 'for taming an animal'
+  broadcastMessage: '$playerName$ has gained $drinksToGive$ $drinks$ to assign for taming an animal'
   drinkValue: 0
+  chance: 0.50
   drinksToGive: 1
-  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
 
 killing-player:
   action: KILL
-  instruction: 'Take $drinkValue$ $drinks$'
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for killing a player'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for committing murder'
   drinkValue: 1
   actionConditions:
     entity: PLAYER
 
 fire-damage:
   action: TAKE_DAMAGE
-  instruction: 'Take $drinkValue$ $drinks$'
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for taking fire damage (30 second cooldown)'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for taking fire damage'
   drinkValue: 1
   cooldown: 30
   actionConditions:
@@ -219,19 +254,265 @@ fire-damage:
 
 lightning-damage:
   action: TAKE_DAMAGE
-  instruction: 'Take $drinkValue$ $drinks$'
-  drinkValue: 1
+  instruction: 'Finish your drink'
+  reason: 'for getting struck by lightning'
+  broadcastMessage: ''
+  drinkValue: 5
+  cooldown: 5
+  actionConditions:
+    damageCause: LIGHTNING
+
+lightning-damage-2:
+  action: TAKE_DAMAGE
+  everyoneElse: true
+  instruction: 'Finish your drink'
+  reason: 'because $playerName$ got struck by lightning'
+  broadcastMessage: 'Everyone must finish their drink because $playerName$ got struck by lightning LMFAO'
+  drinkValue: 5
   cooldown: 5
   actionConditions:
     damageCause: LIGHTNING
 
 breaking-spawner:
   action: BREAK_BLOCK
-  instruction: 'Pick another player to drink'
+  instruction: 'Assign 5 drinks'
+  reason: 'for breaking a spawner'
   drinkValue: 0
-  drinksToGive: 5
-  broadcastMessage: '$player$ has gained $drinksToGive$ to assign'
+  drinksToGive: 3
+  broadcastMessage: '$playerName$ has gained $drinksToGive$ $drinks$ to assign for breaking a spawner'
   actionConditions:
     blockType: SPAWNER
+
+teleporting-to-end:
+  action: TELEPORT
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for teleporting to the end'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for teleporting to the end'
+  drinkValue: 1
+  actionConditions:
+    teleportCause: END_PORTAL
+
+breaking-beehive:
+  action: BREAK_BLOCK
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for breaking a beehive'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for breaking a beehive'
+  drinkValue: 1
+  actionConditions:
+    blockType: BEEHIVE
+
+chating-lol:
+  action: CHAT
+  instruction: 'Take $drinkValue$ drinks'
+  giveReason: false
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for mystery reason #1'
+  drinkValue: 1
+  actionConditions:
+    messageContains: 'lol'
+
+eating-rotten-flesh:
+  action: CONSUME
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for eating rotten flesh'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for eating rotten flesh (gross tbh)'
+  drinkValue: 1
+  actionConditions:
+    itemType: ROTTEN_FLESH
+
+dropping-diamond_sword:
+  action: DROP
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for dropping a diamond tool'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for dropping a diamond tool'
+  drinkValue: 1
+  actionConditions:
+    itemType: DIAMOND_SWORD
+
+dropping-diamond_pickaxe:
+  action: DROP
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for dropping a diamond tool'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for dropping a diamond tool'
+  drinkValue: 1
+  actionConditions:
+    itemType: DIAMOND_PICKAXE
+
+dropping-diamond_shovel:
+  action: DROP
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for dropping a diamond tool'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for dropping a diamond tool'
+  drinkValue: 1
+  actionConditions:
+    itemType: DIAMOND_SHOVEL
+
+dropping-diamond_axe:
+  action: DROP
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for dropping a diamond tool'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for dropping a diamond tool'
+  drinkValue: 1
+  actionConditions:
+    itemType: DIAMOND_AXE
+
+dropping-diamond_hoe:
+  action: DROP
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for dropping a diamond tool'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for dropping a diamond tool'
+  drinkValue: 1
+  actionConditions:
+    itemType: DIAMOND_HOE
+
+fishing_leather_boots:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: LEATHER_BOOTS
+
+fishing_lily_pad:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: LILY_PAD
+
+fishing_leather_bowl:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: BOWL
+
+fishing_leather_leather:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: LEATHER
+
+fishing_rotten_flesh:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: ROTTEN_FLESH
+
+fishing_stick:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: STICK
+
+fishing_string:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: STRING
+
+fishing_water_bottle:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: POTION
+
+fishing_bone:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: BONE
+
+fishing_ink_sac:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: INK_SAC
+
+fishing_tripwire_hook:
+  action: FISH
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for fishing junk'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for junk (this would not happen in the hit plugin FreeRPG)'
+  drinkValue: 1
+  actionConditions:
+    itemType: TRIPWIRE_HOOK
+
+pushing_stone_button:
+  action: INTERACT
+  instruction: 'Take $drinkValue$ drinks'
+  giveReason: false
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for mystery reason #2'
+  drinkValue: 1
+  cooldown: 60
+  actionConditions:
+    itemType: STONE_BUTTON
+
+getting-in-a-minecart:
+  action: INTERACT_ENTITY
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for riding in a minecart'
+  broadcastMessage: '$playerName$ must take $drinkValue$ $drinks$ for riding in a minecart'
+  drinkValue: 1
+  actionConditions:
+    entity: MINECART
+
+talking-to-piglin:
+  action: INTERACT_ENTITY
+  instruction: 'Take $drinkValue$ drinks'
+  reason: 'for talking to a piglin'
+  broadcastMessage: 'A piglin offers $playerName$ $drinkValue$ $drinks$, it would be very rude to decline'
+  drinkValue: 1
+  actionConditions:
+    entity: PIGLIN
+
+killing-enderdragon:
+  action: KILL
+  everyoneElse: true
+  instruction: 'Finish your drink'
+  reason: '$playerName has killed the enderdragon'
+  broadcastMessage: '$playerName$ has beat the game, everyone finish your drinks (filthy casuals)'
+  drinkValue: 3
+  actionConditions:
+    entity: ENDER_DRAGON
+
+killing-enderman:
+  action: KILL
+  instruction: 'Assign $drinksToGive$ $drinks$'
+  reason: 'for killing an enderman'
+  broadcastMessage: '$playerName$ has gained $drinksToGive$ $drinks$ to assign for killing an enderman'
+  drinkValue: 0
+  drinksToGive: 1
+  actionConditions:
+    entity: ENDERMAN
+
+
+
+
 
 

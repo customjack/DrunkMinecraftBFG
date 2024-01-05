@@ -24,4 +24,10 @@ permissions:
   dm.assignDrinkOP:
     description: Allows user to prompt a player to drink without having drinks to give
     default: op
+  dm.setMultiplier:
+    description: Allows user to set a player's drink multiplier
+    default: op
+  dm.multiplierLottery:
+    description: Allows user to incite a lottery to set a random player's drink multiplier temporarily
+    default: op
 

@@ -3,6 +3,7 @@ import me.carlton.drunkminecraft.drinktracking.DrinkScoreboard;
 import me.carlton.drunkminecraft.drinktracking.PlayerDrinkProfile;
 import me.carlton.drunkminecraft.drinktracking.PlayerProfileStorage;
 import me.carlton.drunkminecraft.utility.DrinkMessager;
+import me.carlton.drunkminecraft.utility.DrunkMinecraftPrint;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.advancement.Advancement;
@@ -30,6 +31,7 @@ public class DrinkAction {
     private String broadcastString;
     private boolean giveReason = true;
     private int drinksToGive;
+    private boolean everyoneElseDrinks;
 
     //Information only relevant to some action types
     private Material blockType;
@@ -75,7 +77,10 @@ public class DrinkAction {
     }
 
     public double getDrinkValue() {
-        if (drinkValue == 0.0) {
+        if (drinkValue == -1.0) {
+            if (drinkMin == 0 && drinkMax == 0) {
+                return 1; //Default value if no drink informaiton is specified
+            }
             return (double) (drinkMin + (int)(Math.random() * ((drinkMax - drinkMin) + 1)));
         }
         return drinkValue;
@@ -91,7 +96,11 @@ public class DrinkAction {
             if (isGiveReason()) {
                 reasonString = getReason();
             }
-            return ("$playerName$" + " must drink $drinkValue$ $drinks$ " + reasonString);
+            if (!isEveryoneElseDrinks()) {
+                return ("$playerName$" + " must drink $drinkValue$ $drinks$ " + reasonString);
+            } else {
+                return ("everyone must drink $drinkValue$ $drinks$ " + reasonString + "(courtesy of $playerName$)");
+            }
         }
         return broadcastString;
     }
@@ -137,6 +146,10 @@ public class DrinkAction {
 
     public double getCooldown() {
         return cooldown;
+    }
+
+    public boolean isEveryoneElseDrinks() {
+        return everyoneElseDrinks;
     }
 
     public void setBroadcastString(String broadcastString) {
@@ -189,6 +202,10 @@ public class DrinkAction {
 
     public void setDrinksToGive(int drinksToGive) {
         this.drinksToGive = drinksToGive;
+    }
+
+    public void setEveryoneElseDrinks(boolean everyoneElseDrinks) {
+        this.everyoneElseDrinks = everyoneElseDrinks;
     }
 
     /*
@@ -322,19 +339,49 @@ public class DrinkAction {
     public void makePlayerDrink(Player p) {
         PlayerProfileStorage profileStorage = new PlayerProfileStorage();
         PlayerDrinkProfile playerProfile = profileStorage.getPlayerDrinkProfile(p);
+        if (playerProfile.isDrinkActionOnCooldown(this)) {
+            return;
+        }
         if (Math.random() < getChance()) {
-            double playerDrinkValueGained = getDrinkValue();
-            int playerDrinksToGiveGained = getDrinksToGive();
-            playerProfile.addDrinksTaken(playerDrinkValueGained);
-            playerProfile.addDrinksToGive(playerDrinksToGiveGained);
-            playerProfile.startCooldown(this,(int) Math.round(getCooldown()));
-            String playerReason = parseString(getReason(),p,playerDrinkValueGained,playerDrinksToGiveGained);
-            String playerInstructions = parseString(getInstructions(),p,playerDrinkValueGained,playerDrinksToGiveGained);
-            String playerBroadcastMessage = parseString(getBroadcastMessage(),p,playerDrinkValueGained,playerDrinksToGiveGained);
-            DrinkMessager.sendInstructionsAndReason(p,playerInstructions,playerReason,isGiveReason());
-            Bukkit.getServer().broadcastMessage(playerBroadcastMessage);
-            DrinkScoreboard drinkScoreboard = new DrinkScoreboard();
-            drinkScoreboard.updateAllScoreboards();
+
+            String playerBroadcastMessage;
+            if (!isEveryoneElseDrinks()) {
+                double playerDrinkValueGained = Math.round(getDrinkValue()*playerProfile.getMultiplier()*10d) / 10d;
+                int playerDrinksToGiveGained = getDrinksToGive();
+
+                playerProfile.addDrinksToGive(playerDrinksToGiveGained);
+                playerProfile.startCooldown(this,(int) Math.round(getCooldown()));
+                playerProfile.addDrinksTaken(playerDrinkValueGained);
+
+                String playerReason = parseString(getReason(),p,playerDrinkValueGained,playerDrinksToGiveGained);
+                String playerInstructions = parseString(getInstructions(),p,playerDrinkValueGained,playerDrinksToGiveGained);
+                playerBroadcastMessage = parseString(getBroadcastMessage(),p,playerDrinkValueGained,playerDrinksToGiveGained);
+                DrinkMessager.sendInstructionsAndReason(p, playerInstructions, playerReason, isGiveReason());
+            } else {
+                double playerDrinkValue = getDrinkValue();
+                int playerDrinksToGiveGained = getDrinksToGive();
+
+                playerProfile.addDrinksToGive(playerDrinksToGiveGained);
+                playerProfile.startCooldown(this,(int) Math.round(getCooldown()));
+                playerBroadcastMessage = parseString(getBroadcastMessage(),p,playerDrinkValue,playerDrinksToGiveGained);
+
+                for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+                    if (!otherPlayer.equals(p)) {
+                        PlayerDrinkProfile otherPlayerProfile = profileStorage.getPlayerDrinkProfile(otherPlayer);
+                        double playerDrinkValueGained = Math.round(playerDrinkValue * otherPlayerProfile.getMultiplier() * 10d) / 10d;
+
+                        otherPlayerProfile.addDrinksTaken(playerDrinkValueGained);
+
+                        String playerReason = parseString(getReason(), p, playerDrinkValueGained, playerDrinksToGiveGained);
+                        String playerInstructions = parseString(getInstructions(), p, playerDrinkValueGained, playerDrinksToGiveGained);
+                        DrinkMessager.sendInstructionsAndReason(otherPlayer, playerInstructions, playerReason, isGiveReason());
+                    }
+                }
+            }
+            new DrinkScoreboard().updateAllScoreboards();
+            if (!playerBroadcastMessage.replace(" ","").equals("")){ //If message is not just empty space
+                DrunkMinecraftPrint.broadcast(playerBroadcastMessage);
+            }
         }
     }
     private String parseString(String string,Player p, double drinkValue,int drinksToGive) {
@@ -342,7 +389,7 @@ public class DrinkAction {
 
         string = string.replace("$playerName$",p.getDisplayName());
         string = string.replace("$drinkValue$",format.format(drinkValue));
-        string = string.replace("$drinkToGive$",String.valueOf(drinksToGive));
+        string = string.replace("$drinksToGive$",String.valueOf(drinksToGive));
         if (drinkValue == 1) {
             string = string.replace("$drinks$","drink");
             string = string.replace("$shots$","shot");
@@ -350,7 +397,7 @@ public class DrinkAction {
             string = string.replace("$chugs$","chug");
         } else{
             string = string.replace("$drinks$","drinks");
-            string =string.replace("$shots$","shots");
+            string = string.replace("$shots$","shots");
             string = string.replace("$sips$","sips");
             string = string.replace("$chugs$","chugs");
         }
