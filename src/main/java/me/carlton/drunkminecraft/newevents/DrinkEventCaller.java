@@ -1,5 +1,6 @@
 package me.carlton.drunkminecraft.newevents;
 
+import me.carlton.drunkminecraft.DrunkMinecraft;
 import me.carlton.drunkminecraft.dataholder.DrinkAction;
 import me.carlton.drunkminecraft.dataholder.DrinkActionManager;
 import me.carlton.drunkminecraft.utility.DrinkMessager;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -122,20 +124,21 @@ public class DrinkEventCaller implements Listener {
         if (isPossibleDrinkEvent(AsyncPlayerChatEvent.class,p)) {
             String message = e.getMessage();
             for (DrinkAction drinkAction : eventToDrinkActionMap.get(AsyncPlayerChatEvent.class)) {
+                Plugin plugin = DrunkMinecraft.getPlugin(DrunkMinecraft.class);
                 //No specified messages or words the message should contain, any chat causes drink
                 if (drinkAction.getMessage() == null && drinkAction.getMessageContains() == null) {
-                    callDrinkEvent(e, p, drinkAction);
+                    Bukkit.getScheduler().runTask(plugin,() -> callDrinkEvent(e, p, drinkAction));
                 }
                 //Specified message and the chatted message equals the specified message causes drink
                 if (drinkAction.getMessage() != null) {
                     if (drinkAction.getMessage().equalsIgnoreCase(message)) {
-                        callDrinkEvent(e, p, drinkAction);
+                        Bukkit.getScheduler().runTask(plugin,() -> callDrinkEvent(e, p, drinkAction));
                     }
                 }
                 //Specified contained words and message contains words causes drink
                 if (drinkAction.getMessageContains() != null) {
                     if (message.contains(drinkAction.getMessageContains())) {
-                        callDrinkEvent(e, p, drinkAction);
+                        Bukkit.getScheduler().runTask(plugin,() -> callDrinkEvent(e, p, drinkAction));
                     }
                 }
             }
