@@ -248,6 +248,9 @@ public class DrinkEventCaller implements Listener {
         if (isPossibleDrinkEvent(PlayerInteractEvent.class,p)) {
             boolean isRightClick = isRightClick(e);
             boolean isLeftClick = isLeftClick(e);
+            if (e.getClickedBlock() == null) {
+                return;
+            }
             Material itemType = e.getClickedBlock().getType();
             for (DrinkAction drinkAction : eventToDrinkActionMap.get(PlayerInteractEvent.class)) {
                 if (isRightClick && drinkAction.isRightClick()) {
