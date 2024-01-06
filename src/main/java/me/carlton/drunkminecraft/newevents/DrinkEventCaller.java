@@ -122,12 +122,21 @@ public class DrinkEventCaller implements Listener {
         if (isPossibleDrinkEvent(AsyncPlayerChatEvent.class,p)) {
             String message = e.getMessage();
             for (DrinkAction drinkAction : eventToDrinkActionMap.get(AsyncPlayerChatEvent.class)) {
+                //No specified messages, any chat causes drink
                 if (drinkAction.getMessage() == null && drinkAction.getMessageContains() == null) {
-                    callDrinkEvent(e,p,drinkAction);
-                } else if (drinkAction.getMessage().equalsIgnoreCase(message)) {
-                    callDrinkEvent(e,p,drinkAction);
-                } else if (message.contains(drinkAction.getMessageContains())) {
-                    callDrinkEvent(e,p,drinkAction);
+                    callDrinkEvent(e, p, drinkAction);
+                }
+                //Specified message and the chatted message equals the specified message causes drink
+                if (drinkAction.getMessage() != null) {
+                    if (drinkAction.getMessage().equalsIgnoreCase(message)) {
+                        callDrinkEvent(e, p, drinkAction);
+                    }
+                }
+                //Specified contained words and message contains words causes drink
+                if (drinkAction.getMessageContains() != null) {
+                    if (message.contains(drinkAction.getMessageContains())) {
+                        callDrinkEvent(e, p, drinkAction);
+                    }
                 }
             }
         }
